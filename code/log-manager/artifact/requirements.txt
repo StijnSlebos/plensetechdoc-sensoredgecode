@@ -1,1 +1,1 @@
-boto3
+# Local logging system - no AWS dependencies

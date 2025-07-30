@@ -1,8 +1,0 @@
-# User crontab for Production Raspberry Pi
-# Last updated: 2024-11-15
-# 
-# To apply: crontab production.cron
-
-TZ="Europe/Amsterdam"
-
-11 0 * * * /home/plense/edge-code/log-manager/artifact/run_log_manager.sh

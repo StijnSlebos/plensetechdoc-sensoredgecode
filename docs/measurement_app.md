@@ -89,7 +89,7 @@ Interrupts are managed via:
 Each measurement creates:
 - `.flac` audio file
 - `.json` response log
-- Stored under: `/home/plense/plensor_data/[SensorID]/[Timestamp]/`
+- Stored under: `/home/plense/plensor_data/audio_data/`
 
 ---
 
@@ -117,6 +117,6 @@ Each measurement creates:
 - [sensor_commands.md](sensor_commands.md)
 - [sensor_hardware.md](sensor_hardware.md)
 - [gpio_and_relay_setup.md](gpio_and_relay_setup.md)
-- [queue_manager.py](../code/measure-plensor/queue_manager.py)
-- [app.py](../code/measure-plensor/app.py)
-- [sensor.py](../code/measure-plensor/sensor.py)
+- [queue_manager.py](../code/measure-plensor/artifact/queue_manager.py)
+- [app.py](../code/measure-plensor/artifact/app.py)
+- [sensor.py](../code/measure-plensor/artifact/sensor.py)

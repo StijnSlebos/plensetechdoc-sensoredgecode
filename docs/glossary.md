@@ -40,7 +40,7 @@ Single-byte XOR value used to validate message integrity.
 Optional parameter that tapers burst signal edges. Range: 0–255.
 
 **Deployment**  
-A project-specific installation of sensors and Pi units at a defined location.
+A project-specific installation of sensors and Pi units at a defined location (legacy term, now replaced by "session").
 
 ---
 
@@ -115,7 +115,7 @@ Byte (`0x15`) returned when a command fails.
 Maximum envelope value, used in TOF detection.
 
 **Processing Log**  
-JSON file documenting time and steps in signal pipeline.
+JSON file documenting time and steps in signal pipeline (legacy term, now replaced by local metadata files).
 
 ---
 

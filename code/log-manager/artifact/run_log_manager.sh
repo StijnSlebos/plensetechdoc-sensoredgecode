@@ -1,8 +1,7 @@
 #!/bin/bash
 
-# Set environment variables
-export BUCKET_NAME='prd-signal-bucket'
-export AWS_REGION='eu-central-1'
+# Set environment variables for local operation
+export AS_LOCAL='true'
 
 cd /home/plense/edge-code/log-manager/artifact
 source /home/plense/edge-code/.venv/bin/activate

@@ -68,6 +68,6 @@ Some setups include relays controlled by GPIO 21:
 
 - [sensor_hardware.md](sensor_hardware.md)
 - [power_management.md](power_management.md)
-- [switch_mosfet.py](../code/measure-plensor/switch_mosfet.py)
-- [Relay.py](../code/measure-plensor/Relay.py)
-- [message_handler.py](../code/measure-plensor/message_handler.py)
+- [switch_mosfet.py](../code/setup-plensor/switch_mosfet.py)
+- [Relay.py](../code/setup-plensor/Relay.py)
+- [message_handler.py](../code/measure-plensor/artifact/message_handler.py)

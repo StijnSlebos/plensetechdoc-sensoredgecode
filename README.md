@@ -26,11 +26,14 @@ Plensor is a modular ultrasonic sensing platform for environmental monitoring, o
 ```
 /
 ├── code/ # All code modules
-│ ├── measure-plensor/ # Measurement system and sensor mixins
-│ ├── process-data/ # Signal processing scripts
+│ ├── measure-plensor/artifact/ # Measurement system and sensor mixins
+│ ├── process-data/artifact/ # Signal processing scripts
 │ ├── metadata/ # Streamlit GUI for config
-│ ├── log-manager/ # Logger, watchdog, error handling
-│ └── deployments/ # Metadata and examples
+│ ├── log-manager/artifact/ # Logger, watchdog, error handling
+│ ├── rpi-health/artifact/ # System health monitoring
+│ ├── setup-plensor/ # Hardware setup utilities
+│ ├── modem-manager/ # GSM modem management
+│ └── Interface-guis/ # User interface applications
 ├── docs/ # Documentation site
 │ ├── *.md # Pages like architecture.md, commands.md, etc.
 │ └── assets/ # All supporting diagrams and screenshots
@@ -79,7 +82,7 @@ Additional original reports, logs, and slides can be found in:
 ## 🧪 Running the Measurement App
 
 ```bash
-cd code/measure-plensor
+cd code/measure-plensor/artifact
 python3 app.py
 ```
 

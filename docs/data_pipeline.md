@@ -8,10 +8,10 @@ This document describes the signal processing and data transformation steps in t
 
 - **File Type**: `.flac` audio
 - **Channels**: Mono
-- **Sample Rate**: 192 kHz
+- **Sample Rate**: 500 kHz
 - **Bit Depth**: 16-bit
 
-Captured via USB sound card or Pi onboard audio depending on deployment.
+Captured via USB sound card or Pi onboard audio depending on hardware configuration.
 
 ---
 
@@ -31,7 +31,7 @@ FLAC → WAV → Array → FFT + Envelope + Peak → Feature JSON + Spectral .np
 
 - Decode `.flac` using `soundfile`
 - Normalize amplitude
-- Apply bandpass filter (10 kHz – 70 kHz)
+- Apply bandpass filter (10 kHz – 70 kHz) (if processing is enabled)
 
 ### 2. Envelope Extraction
 
@@ -59,24 +59,28 @@ For each sensor and timepoint, the pipeline outputs:
 
 | File Type | Filename                          | Description                   |
 |-----------|-----------------------------------|-------------------------------|
-| `.npy`    | `fft.npy`                         | Raw FFT bins                  |
-| `.npy`    | `envelope.npy`                    | Time-domain envelope          |
-| `.json`   | `signal_summary.json`             | All extracted metrics         |
-| `.json`   | `processing_log.json`             | Runtime info + warnings       |
+| `.flac`   | `{meas_id}#{sensor_id}_{timestamp}.flac` | Raw audio recording |
+| `.json`   | `{sensor_id}_{timestamp}.json`   | Local metadata file           |
+| `.json`   | `{sensor_id}_env_{timestamp}.json` | Environmental data (if available) |
+| `.json`   | `{prefix}_{timestamp}.json`      | TOF data (if available)       |
+| `.json`   | `health_{sensor_id}_{timestamp}.json` | Health metrics log |
+| `.json`   | `environment_{sensor_id}_{timestamp}.json` | Environment log |
 
 ---
 
 ## 📁 Output Directory Structure
 
 ```
-/plensor_data/
-└── Sensor_01/
-└── 2025-07-25_14-30-01/
-├── signal.flac
-├── fft.npy
-├── envelope.npy
-├── signal_summary.json
-├── processing_log.json
+/home/plense/plensor_data/
+├── audio_data/
+│   ├── time_domain_not_processed/  # Raw audio files
+│   └── time_domain_processed/      # Processed audio files
+├── metadata/                       # Local metadata files
+├── environmental/                  # Environmental sensor data
+├── tof/                           # Time-of-flight measurements
+├── health_logs/                   # System health metrics
+├── environment_logs/              # Environment monitoring logs
+└── logs/                          # Application logs
 ```
 
 ---

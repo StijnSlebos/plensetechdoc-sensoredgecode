@@ -91,5 +91,5 @@ Measured voltage (V) vs number of sensors:
 
 - [sensor_hardware.md](sensor_hardware.md)
 - [gpio_and_relay_setup.md](gpio_and_relay_setup.md)
-- [deployment_config.json](../deployments/)
+- [settings.json](../code/process-data/artifact/settings.json)
 

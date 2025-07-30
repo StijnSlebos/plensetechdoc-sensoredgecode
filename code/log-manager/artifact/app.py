@@ -1,4 +1,3 @@
-import boto3
 import os
 import re
 import socket
@@ -12,10 +11,10 @@ from ErrorLogger import ErrorLogger
 
 class LogManager:
     """
-    This class manages the logs of all the Greengrass components
+    This class manages the logs of all the local components
     running on the Raspberry Pi. This includes both the logs which
-    are generated from within the running Docker containers and
-    the Greengrass native logs per component, which are generated at
+    are generated from within the running local processes and
+    the system logs per component, which are generated at
     the deployment time of the components.
 
     In this way, when the Raspberry Pi's are in a remote location for
@@ -25,14 +24,14 @@ class LogManager:
 
     def __init__(self):
         self.logger = ErrorLogger.get_instance(
-            directory='/home/plense/error_logs', log_level=20, log_file_name='LogManagerPlense.log')
+            directory='/home/plense/error_logs', 
+            log_level=20, 
+            log_file_name='LogManagerPlense.log'
+        )
         self.logger.log_critical('-----New instance started-----')
-        self.gg_logs_dir = '/greengrass/v2/logs'
+        self.system_logs_dir = '/var/log'
         self.plense_logs_dir = '/home/plense/error_logs'
         self.pi_id = self.read_hostname_from_system()
-        self.s3 = boto3.client('s3')
-        self.bucket_name = os.environ.get('BUCKET_NAME')
-        self.aws_region = os.environ.get('AWS_REGION')
         self.special_logs = ['ModemManagerPlense.log']
 
     def read_hostname_from_system(self) -> str:
@@ -46,28 +45,28 @@ class LogManager:
             self.logger.log_error(f"Error reading hostname from system: {e}")
             return "unknown_hostname"
 
-    def upload_logs_to_s3(self, s3_key, log_filepath):
+    def save_logs_locally(self, local_key, log_filepath):
         """
-        Uploads a log file to our S3 bucket.
+        Saves a log file to local storage.
 
         Args:
-            s3_key (str): The S3 key for the uploaded file.
-            log_filepath (str): The path to the log file to be uploaded.
+            local_key (str): The local path for the saved file.
+            log_filepath (str): The path to the log file to be saved.
 
         Returns:
-            bool: True if the file was uploaded successfully, else False.
+            bool: True if the file was saved successfully, else False.
         """
         try:
-            s3 = boto3.client('s3', region_name=self.aws_region)
-            self.logger.log_info(f"Bucket to save to: {self.bucket_name}")
-            s3.upload_file(
-                Filename=log_filepath, Bucket=self.bucket_name, Key=s3_key)
+            import shutil
+            os.makedirs(os.path.dirname(local_key), exist_ok=True)
+            shutil.copy2(log_filepath, local_key)
+            self.logger.log_info(f"Log saved locally: {local_key}")
             return True
         except FileNotFoundError:
             self.logger.log_error("The file was not found")
             return False
         except Exception as e:
-            self.logger.log_critical(f"Error saving log file to S3: {e}")
+            self.logger.log_critical(f"Error saving log file locally: {e}")
             return False
 
     def scan_logs_dir(self, log_dir='/home/plense/error_logs') -> List:
@@ -88,7 +87,7 @@ class LogManager:
     def extract_log_timestamp(self, log_filename, log_type='plense') -> Optional[str]:
         """
         Checks whether the log filename contains a timestamp, indicating that it is a
-        log file which will not be logged to anymore, from both the GG log filename format
+        log file which will not be logged to anymore, from both the system log filename format
         and the Plense log filename format using a regular expression.
         """
         try:
@@ -99,147 +98,89 @@ class LogManager:
 
             pattern = r'^[a-zA-Z]+_(\d{4})_(\d{2})_(\d{2})_(\d{2})_(\d{1,2})\.log$'
             match = re.match(pattern, log_filename)
-
             if match:
                 return True
-            else:
-                return None
 
+            return False
         except Exception as e:
-            self.logger.log_error(f"Error while extracting log timestamp: {e}")
-            return None
+            self.logger.log_error(f"Error extracting log timestamp: {e}")
+            return False
 
     def handle_logs_folder(self, log_dir) -> None:
         """
-        Handles the logs folder for either the GG logs or the Plense logs.
-        Args:
-            log_dir (str): Path to the directory containing log files to process.
-                          Can be either Greengrass logs or Plense logs directory.
-
-        Returns:
-            None: This function does not return anything.
+        Handles the logs folder by processing each log file.
         """
         try:
-            if log_dir == self.gg_logs_dir:
-                logs_file_list = self.scan_logs_dir(self.gg_logs_dir)
-                log_type = 'gg'
-            elif log_dir == self.plense_logs_dir:
-                logs_file_list = self.scan_logs_dir(self.plense_logs_dir)
-                log_type = 'plense'
-            else:
-                logs_file_list = []
-                raise ValueError(f"Invalid log directory: {log_dir}")
-
-            for log_filename in logs_file_list:
-                print(f"Handling log {log_filename}")
-                
-                try:
-                    if log_filename in self.special_logs:
-                        self._handle_special_log(log_dir, log_filename)
-                        continue
-
-                    self._handle_regular_log(log_dir, log_filename, log_type)
-
-                except PermissionError as e:
-                    self.logger.log_error(f"Permission denied while handling log {log_filename}: {e}")
-                    continue
-                except IOError as e:
-                    self.logger.log_error(f"I/O error while handling log {log_filename}: {e}")
-                    continue
-                except Exception as e:
-                    self.logger.log_error(f"Unexpected error while handling log {log_filename}: {e}")
-                    continue
-        except FileNotFoundError as e:
-            self.logger.log_error(f"Log directory not found: {log_dir} - {e}")
-        except PermissionError as e:
-            self.logger.log_error(f"Permission denied accessing log directory {log_dir}: {e}")
+            logs_list = self.scan_logs_dir(log_dir)
+            for log_filename in logs_list:
+                if log_filename in self.special_logs:
+                    self._handle_special_log(log_dir, log_filename)
+                else:
+                    self._handle_regular_log(log_dir, log_filename, 'plense')
         except Exception as e:
-            self.logger.log_error(f"Unexpected error while processing logs folder {log_dir}: {e}")
+            self.logger.log_error(f"Error handling logs folder: {e}")
 
     def _handle_special_log(self, log_dir: str, log_filename: str) -> None:
         """
-        Handle special log files that need daily uploads.
-        Special log files are logs that are generated by shell scripts,
-        which do not get timestamp appendices when the log files are
-        of yesterday.
-        Args:
-            log_dir (str): Directory path containing the log files
-            log_filename (str): Name of the special log file to handle
-
-        Returns:
-            None: This function does not return anything
+        Handles special log files that need different processing.
         """
         try:
-            # Create a timestamped copy of the log file
-            timestamp = datetime.now().strftime('%Y-%m-%d')
-            timestamped_filename = f"{log_filename}.{timestamp}"
-
-            # Create a copy of the log file with timestamp
-            source_path = os.path.join(log_dir, log_filename)
-            dest_path = os.path.join(log_dir, timestamped_filename)
-
-            try:
-                with open(source_path, 'r') as source:
-                    with open(dest_path, 'w') as dest:
-                        dest.write(source.read())
-            except IOError as e:
-                raise IOError(f"Failed to copy log file {log_filename}: {e}")
-
-            # Upload the timestamped copy
-            log_s3_key = f"pi_errorlogs/{self.pi_id}/{timestamped_filename}"
-            log_upload_success = self.upload_logs_to_s3(log_s3_key, dest_path)
-
-            if log_upload_success:
-                self.logger.log_info(f"Special log file {timestamped_filename} uploaded successfully.")
-                try:
-                    # Remove the timestamped copy
-                    os.remove(dest_path)
-                    # Clear the original log file but keep it
-                    open(source_path, 'w').close()
-                except OSError as e:
-                    self.logger.log_error(f"Error cleaning up log files: {e}")
-
+            log_filepath = os.path.join(log_dir, log_filename)
+            if os.path.exists(log_filepath):
+                # Create local backup
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                local_key = f"/home/plense/plensor_data/logs/special/{log_filename}_{timestamp}"
+                self.save_logs_locally(local_key, log_filepath)
+                
+                # Remove original file after successful backup
+                os.remove(log_filepath)
+                self.logger.log_info(f"Special log processed: {log_filename}")
         except Exception as e:
-            raise RuntimeError(f"Failed to handle special log {log_filename}: {e}")
+            self.logger.log_error(f"Error handling special log {log_filename}: {e}")
 
     def _handle_regular_log(self, log_dir: str, log_filename: str, log_type: str) -> None:
-        """Handle regular log files with timestamps."""
+        """
+        Handles regular log files.
+        """
         try:
-            logs_timestamp = self.extract_log_timestamp(log_filename, log_type)
-            if logs_timestamp:
-                log_s3_key = f"pi_errorlogs/{self.pi_id}/{log_filename}"
-                log_path = os.path.join(log_dir, log_filename)
-
-                log_upload_success = self.upload_logs_to_s3(log_s3_key, log_path)
-                if log_upload_success:
-                    self.logger.log_info(f"Log file {log_filename} uploaded successfully.")
-                    try:
-                        os.remove(log_path)
-                    except OSError as e:
-                        self.logger.log_error(f"Error removing log file {log_filename}: {e}")
-
+            log_filepath = os.path.join(log_dir, log_filename)
+            if os.path.exists(log_filepath):
+                # Check if log has timestamp (indicating it's complete)
+                if self.extract_log_timestamp(log_filename, log_type):
+                    # Create local backup
+                    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                    local_key = f"/home/plense/plensor_data/logs/{log_type}/{log_filename}_{timestamp}"
+                    self.save_logs_locally(local_key, log_filepath)
+                    
+                    # Remove original file after successful backup
+                    os.remove(log_filepath)
+                    self.logger.log_info(f"Regular log processed: {log_filename}")
         except Exception as e:
-            raise RuntimeError(f"Failed to handle regular log {log_filename}: {e}")
+            self.logger.log_error(f"Error handling regular log {log_filename}: {e}")
 
     def run(self) -> None:
         """
-        Runs the LogManager class once every day. This function scans the logs folder,
-        processes each log file by determining its type (internal or Greengrass),
-        extracts timestamps, creates S3 keys, and uploads the logs to an S3 bucket.
-        Successfully uploaded logs are then removed from the local filesystem.
-
-        The process repeats every 24 hours.
-
-        Logs information about each step and any errors encountered.
+        Main run loop for log management.
         """
         try:
-            self.handle_logs_folder(log_dir=self.gg_logs_dir)
-            self.handle_logs_folder(log_dir=self.plense_logs_dir)
-
+            self.logger.log_info("Starting local log manager...")
+            
+            while True:
+                # Handle Plense logs
+                self.handle_logs_folder(self.plense_logs_dir)
+                
+                # Handle system logs (optional)
+                # self.handle_logs_folder(self.system_logs_dir)
+                
+                # Sleep for a bit before next iteration
+                time.sleep(3600)  # Check every hour
+                
+        except KeyboardInterrupt:
+            self.logger.log_info("Log manager stopped by user")
         except Exception as e:
-            self.logger.log_error(f"Error in main loop: {e}")
+            self.logger.log_error(f"Error in main run loop: {e}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     log_manager = LogManager()
     log_manager.run()

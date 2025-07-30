@@ -7,7 +7,7 @@ from ErrorLogger import ErrorLogger
 
 class TemperatureLogger:
     def __init__(self, templog_dir='temperature_logs', interval=60):
-        self.logger = ErrorLogger.get_instance(directory='/greengrass/v2/logs', log_level=40, log_file_name='RPiHealthDocker.log')
+        self.logger = ErrorLogger.get_instance(directory='/home/plense/error_logs', log_level=40, log_file_name='RPiHealthLocal.log')
         self.log_dir = templog_dir
         self.interval = interval
         self.hostname_filepath = '/etc/hostname'

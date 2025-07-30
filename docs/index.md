@@ -18,7 +18,7 @@ Welcome to the official documentation for the Plensor sensor platform. This repo
 | [data_pipeline.md](data_pipeline.md)           | Signal processing from `.flac` to `.json`/`.npy`    |
 | [storage_and_logging.md](storage_and_logging.md)| File structure and logging mechanisms               |
 | [metadata_interface.md](metadata_interface.md) | Streamlit-based tool for setting up metadata        |
-| [deployments.md](deployments.md)               | Folder structure, naming conventions, and strategy  |
+| [storage_and_logging.md](storage_and_logging.md) | File structure and logging mechanisms               |
 | [configuration_guide.md](configuration_guide.md)| JSON configuration files and runtime control        |
 | [data_structure.md](data_structure.md)         | File format details and schema definitions          |
 | [glossary.md](glossary.md)                     | Full glossary of system terms and acronyms          |
@@ -37,7 +37,7 @@ Welcome to the official documentation for the Plensor sensor platform. This repo
 ├── process-data/ # Audio processing pipeline
 ├── log-manager/ # Logging utility
 ├── metadata/ # Metadata editor GUI
-├── deployments/ # Saved configs
+├── rpi-health/ # System health monitoring
 
 README.md # Top-level system overview
 ```

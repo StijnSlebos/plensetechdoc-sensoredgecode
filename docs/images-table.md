@@ -33,18 +33,18 @@ This table summarizes all visual assets referenced across the Plensor documentat
 |----------------------------|------------------------------------------------------|------------------------------------|
 | `raw_waveform.png`         | Unfiltered signal plot from `signal.flac`            | Screenshot from NumPy/Matplotlib   |
 | `filtered_waveform.png`    | Bandpass-filtered waveform                           | After envelope smoothing           |
-| `fft_spectrum.png`         | FFT bin plot                                         | From `fft.npy`                     |
+| `audio_spectrum.png`       | Audio spectrum plot                                  | From `.flac` files                  |
 | `envelope_overlay.png`     | Envelope on top of signal waveform                   | For TOF peak visual                |
 
 ---
 
-## ⚡ Power & Deployment
+## ⚡ Power & Hardware
 
 | Filename                   | Description                                          | Source                            |
 |----------------------------|------------------------------------------------------|------------------------------------|
 | `voltage_vs_sensors.png`   | Voltage drop model with increasing sensor count      | Based on NPEC test plots           |
 | `power_distribution.png`   | Power routing layout from Pi Hat to sensors          | From schematic or drawing          |
-| `deployment_structure.png` | Folder structure example with sensor IDs and timestamps| From `deployments.md`             |
+| `session_structure.png` | Folder structure example with sensor IDs and timestamps| From current data structure       |
 | `metadata_editor_ui.png`   | Screenshot of Streamlit metadata app                 | From `metadata_app.py`             |
 
 ---
@@ -54,8 +54,8 @@ This table summarizes all visual assets referenced across the Plensor documentat
 | Filename                   | Description                                          | Source                            |
 |----------------------------|------------------------------------------------------|------------------------------------|
 | `file_output_example.png`  | Folder and file example per measurement              | From data_pipeline.md             |
-| `signal_summary_example.png`| Snippet of `signal_summary.json` fields             | From actual JSON or doc           |
-| `processing_log_example.png`| Sample of `processing_log.json`                     | Same as above                     |
+| `metadata_example.png`      | Snippet of metadata JSON fields                     | From actual JSON or doc           |
+| `health_log_example.png`    | Sample of health metrics JSON                       | Same as above                     |
 | `logging_overview.png`     | Diagram of error/runtime/watchdog logs              | From `storage_and_logging.md`     |
 
 ---

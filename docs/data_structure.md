@@ -9,82 +9,106 @@ This document defines the structure of all data types and file formats produced 
 Each measurement is saved to a timestamped folder under `/plensor_data/[SensorID]/`:
 
 ```
-/plensor_data/
-└── Sensor_01/
-└── 2025-07-30_14-30-00/
-├── signal.flac
-├── fft.npy
-├── envelope.npy
-├── signal_summary.json
-├── processing_log.json
+/home/plense/plensor_data/
+├── audio_data/
+│   ├── time_domain_not_processed/  # Raw audio files
+│   └── time_domain_processed/      # Processed audio files
+├── metadata/                       # Local metadata files
+├── environmental/                  # Environmental sensor data
+├── tof/                           # Time-of-flight measurements
+├── health_logs/                   # System health metrics
+├── environment_logs/              # Environment monitoring logs
+└── logs/                          # Application logs
 ```
 
 ---
 
-## 🎧 `signal.flac`
+## 🎧 `{meas_id}#{sensor_id}_{timestamp}.flac`
 
 - Mono audio
-- Sample rate: 192000 Hz
+- Sample rate: 500000 Hz
 - Bit depth: 16-bit PCM
 - Captures raw ultrasonic echo return
+- Naming convention: `{measurement_type}#{sensor_id}_{timestamp}.flac`
 
 ---
 
-## 🔊 `fft.npy`
+## 📊 `{sensor_id}_{timestamp}.json`
 
-- Shape: `(N,)`
-- Type: `float32`
-- Represents magnitude of frequency bins (0–96 kHz)
-- Used for spectral classification and envelope shaping
+Contains local metadata and measurement parameters:
 
----
-
-## 📈 `envelope.npy`
-
-- Shape: `(N,)`
-- Type: `float32`
-- Amplitude over time after Hilbert transform and smoothing
-- Used for TOF peak analysis
-
----
-
-## 📊 `signal_summary.json`
-
-Contains extracted features and summary statistics:
-
-
-
-```
+```json
 {
-"sensor_id": 1,
-"timestamp": "2025-07-30T14:30:00",
-"peak_amplitude": 0.94,
-"peak_position": 3221,
-"dominant_freq": 25400,
-"snr": 23.8,
-"tof_us": 612,
-"temperature_c": 25.1,
-"humidity_percent": 46.3,
-"command": "SINE"
+  "sensor_id": "#00001",
+  "record_timestamp": "2025-07-30T14:30:00",
+  "file_metadata": {
+    "meas_id": "SINE",
+    "sensor_id": "#00001",
+    "datetime": "2025-07-30T14:30:00"
+  },
+  "measurement_metadata": {
+    "max_amp": 0.94,
+    "successful_reps": 10,
+    "sum_of_squares": 0.23
+  },
+  "created_at": "2025-07-30T14:30:00"
 }
 ```
 
 ---
 
-## 🧾 `processing_log.json`
+## 🌡️ `{sensor_id}_env_{timestamp}.json`
 
-Logs internal pipeline behavior:
+Environmental sensor data (if available):
 
-
-
-```
+```json
 {
-"processing_time_ms": 180,
-"fft_bins": 1024,
-"envelope_smoothing": "exp_decay",
-"errors": [],
-"input_file": "signal.flac",
-"notes": "Success"
+  "sensor_id": "#00001",
+  "record_timestamp": "2025-07-30T14:30:00",
+  "environmental_data": {
+    "inside_temp": 25.1,
+    "outside_temp": 24.8,
+    "inside_humidity": 46.3,
+    "outside_humidity": 45.9
+  },
+  "created_at": "2025-07-30T14:30:00"
+}
+```
+
+---
+
+## ⏱️ `{prefix}_{timestamp}.json`
+
+TOF measurements (if available):
+
+```json
+{
+  "metadata": {
+    "sensor_id": "#00001",
+    "sensor_type": "PLENSOR"
+  },
+  "record_timestamp": "2025-07-30T14:30:00",
+  "tof_data": [612, 615, 618, 620],
+  "prefix": "tof_ns",
+  "created_at": "2025-07-30T14:30:00"
+}
+```
+
+---
+
+## 💚 `health_{sensor_id}_{timestamp}.json`
+
+System health metrics:
+
+```json
+{
+  "sensor_id": "#00001",
+  "data_type": "time_domain",
+  "input_signal": "SINE",
+  "health_metric_name": "upload_size",
+  "health_metric_value": 1024000,
+  "record_timestamp": "2025-07-30T14:30:00",
+  "created_at": "2025-07-30T14:30:00"
 }
 ```
 
@@ -92,22 +116,23 @@ Logs internal pipeline behavior:
 
 ## 🧪 Validation Rules
 
-- `peak_amplitude` should be < 1.0
-- `tof_us` must be positive and realistic (< 2000 μs)
-- FFT bins must be non-zero
-- NaNs in `.npy` files indicate pipeline failure
+- `max_amp` should be < 1.0
+- `successful_reps` must be positive and match expected repetitions
+- `sum_of_squares` should be reasonable for the signal type
+- All JSON files must have valid `created_at` timestamps
+- Sensor IDs must follow the format `#XXXXX`
 
 ---
 
 ## 🧵 Metadata Linkage
 
-Each summary JSON embeds:
-- Sensor ID
-- Timestamp
-- Command type
-- Environmental context
+Each JSON file embeds:
+- Sensor ID and timestamp
+- Measurement type and parameters
+- Environmental context (if available)
+- System health metrics (if available)
 
-These align with deployment metadata and can be batch-aggregated.
+These align with session metadata and can be batch-aggregated.
 
 ---
 
@@ -115,4 +140,4 @@ These align with deployment metadata and can be batch-aggregated.
 
 - [data_pipeline.md](data_pipeline.md)
 - [storage_and_logging.md](storage_and_logging.md)
-- [deployment_metadata.json](../deployments/)
+- [metadata files](../code/metadata/)

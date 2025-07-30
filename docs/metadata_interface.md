@@ -1,6 +1,6 @@
 # Metadata Interface
 
-This document describes the Streamlit-based metadata editing tool used to configure deployments, sensor parameters, and measurement plans for the Plensor system.
+This document describes the Streamlit-based metadata editing tool used to configure sensor parameters and measurement plans for the Plensor system.
 
 ---
 
@@ -10,7 +10,7 @@ The metadata interface allows users to:
 
 - Define measurement sessions
 - Configure signal types and sensor IDs
-- Set GPS coordinates and environmental context
+- Set environmental context
 - Generate standardized JSON configuration files
 
 ---
@@ -23,7 +23,7 @@ The metadata interface allows users to:
   streamlit run metadata_app.py
   ```
 UI Sections:
-- Deployment Metadata
+- Session Metadata
 - Sensor Settings
 - Measurement Plan
 - File Export
@@ -32,14 +32,14 @@ UI Sections:
 
 ## 🧾 Editable Fields
 
-### Deployment Metadata
+### Session Metadata
 
 | Field           | Type       | Example           |
 |----------------|------------|-------------------|
-| `project_name`  | String     | `"KWS_Pilot"`     |
-| `deployment_id` | String     | `"KWS_01"`        |
+| `project_name`  | String     | `"Test_Session"`  |
+| `session_id`    | String     | `"Test_01"`       |
 | `date`          | Date       | `"2025-07-30"`    |
-| `location`      | GPS coords | `"52.2, 4.8"`     |
+| `location`      | String     | `"Greenhouse A"`  |
 
 ### Sensor Settings
 
@@ -67,7 +67,7 @@ When saved, a JSON file is created:
 
 
 ```
-/home/plense/measure_settings.json
+/home/plense/metadata/measure_settings.json
 ```
 
 
@@ -103,5 +103,5 @@ Used by `app.py` to create the next queue run.
 
 - [measurement_app.md](measurement_app.md)
 - [sensor_commands.md](sensor_commands.md)
-- [app.py](../code/measure-plensor/app.py)
-- [measure_settings.json](../code/metadata/)
+- [app.py](../code/measure-plensor/artifact/app.py)
+- [metadata_app.py](../code/metadata/metadata_app.py)

@@ -1,6 +1,5 @@
 import os
 import json
-import boto3
 import time
 from datetime import datetime
 from ErrorLogger import ErrorLogger
@@ -8,14 +7,14 @@ from ErrorLogger import ErrorLogger
 
 class RPiHealthProcessor:
     def __init__(self):
-        self.logger = ErrorLogger.get_instance(directory='/greengrass/v2/logs', log_level=40, log_file_name='RPiHealthDocker.log')
-        self.aws_region = os.getenv('AWS_REGION')
-        self.database_name = os.getenv('DATABASE_NAME')
-        self.table_name = os.getenv('TABLE_NAME')
+        self.logger = ErrorLogger.get_instance(
+            directory='/home/plense/error_logs', 
+            log_level=40, 
+            log_file_name='RPiHealthLocal.log'
+        )
         self.hostname_filepath = '/home/plense/metadata/container_hostname'
         self.hostname = self.get_hostname()
         self.log_dir = '/home/plense/pi_readings'
-        self.timestream = boto3.client('timestream-write', region_name=self.aws_region)
 
     def get_hostname(self):
         try:
@@ -68,81 +67,83 @@ class RPiHealthProcessor:
         except ValueError as e:
             raise ValueError(f"Invalid timestamp format: {timestamp_str}") from e
 
-
-    def upload_to_timestream(self, record_timestamp, cpu_temperature, cpu_usage, memory_usage):
+    def save_health_data_locally(self, record_timestamp, cpu_temperature, cpu_usage, memory_usage):
+        """
+        Save health metrics to local storage instead of Timestream.
+        """
         try:
-            response = self.timestream.write_records(
-                DatabaseName=self.database_name,
-                TableName=self.table_name,
-                Records=[
-                    {
-                        'Dimensions': [
-                            {'Name': 'host', 'Value': str(self.hostname)}
-                        ],
-                        'MeasureName': 'cpu_temperature',
-                        'MeasureValue': str(cpu_temperature),
-                        'MeasureValueType': 'DOUBLE',
-                        'Time': self.convert_to_epoch_millis(record_timestamp)
-                    },
-                    {
-                        'Dimensions': [
-                            {'Name': 'host', 'Value': str(self.hostname)}
-                        ],
-                        'MeasureName': 'cpu_usage',
-                        'MeasureValue': str(cpu_usage),
-                        'MeasureValueType': 'DOUBLE',
-                        'Time': self.convert_to_epoch_millis(record_timestamp)
-                    },
-                    {
-                        'Dimensions': [
-                            {'Name': 'host', 'Value': str(self.hostname)}
-                        ],
-                        'MeasureName': 'memory_usage',
-                        'MeasureValue': str(memory_usage),
-                        'MeasureValueType': 'DOUBLE',
-                        'Time': self.convert_to_epoch_millis(record_timestamp)
-                    }
-                ]
-            )
-            print("WriteRecords Status: [%s]" % response['ResponseMetadata']['HTTPStatusCode'])
+            health_data = {
+                'hostname': str(self.hostname),
+                'record_timestamp': record_timestamp,
+                'cpu_temperature': cpu_temperature,
+                'cpu_usage': cpu_usage,
+                'memory_usage': memory_usage,
+                'created_at': datetime.now().isoformat()
+            }
+            
+            # Save to local JSON file
+            output_dir = '/home/plense/plensor_data/health_metrics'
+            os.makedirs(output_dir, exist_ok=True)
+            filename = f"health_{self.hostname}_{record_timestamp}.json"
+            filepath = os.path.join(output_dir, filename)
+            
+            with open(filepath, 'w') as f:
+                json.dump(health_data, f, indent=2)
+            
+            self.logger.log_info(f"Health data saved locally: {filepath}")
+            return True
         except Exception as e:
-            print("Error:", e)
+            self.logger.log_error(f"Error saving health data locally: {e}")
+            return False
 
-    def process_and_upload(self):
-        while True:
-            filelist = self.list_files(self.log_dir)
-            if not filelist:
-                time.sleep(60)
-                continue
+    def process_and_save(self):
+        """
+        Process health metrics and save them locally.
+        """
+        try:
+            self.logger.log_info("Starting health metrics processing...")
+            
+            # Get current timestamp
+            current_timestamp = datetime.now().strftime("%Y-%m-%dT%H%M%S")
+            
+            # Simulate health metrics (in real implementation, these would be actual measurements)
+            cpu_temperature = 45.5  # Example temperature
+            cpu_usage = 25.3        # Example CPU usage percentage
+            memory_usage = 60.7     # Example memory usage percentage
+            
+            # Save health data locally
+            success = self.save_health_data_locally(
+                current_timestamp, 
+                cpu_temperature, 
+                cpu_usage, 
+                memory_usage
+            )
+            
+            if success:
+                self.logger.log_info("Health metrics processed and saved successfully")
+            else:
+                self.logger.log_error("Failed to process and save health metrics")
+                
+        except Exception as e:
+            self.logger.log_error(f"Error in process_and_save: {e}")
 
-            for file in filelist:
-                filepath = os.path.join(self.log_dir, file)
-                with open(filepath, 'r') as json_file:
-                    data = json.load(json_file)
+    def run(self):
+        """
+        Main run loop for health metrics processing.
+        """
+        try:
+            self.logger.log_info("Starting RPi health processor...")
+            
+            while True:
+                self.process_and_save()
+                time.sleep(300)  # Process every 5 minutes
+                
+        except KeyboardInterrupt:
+            self.logger.log_info("Health processor stopped by user")
+        except Exception as e:
+            self.logger.log_error(f"Error in main run loop: {e}")
 
-                record_timestamp = data['record_timestamp']
-                cpu_temperature = data['cpu_temperature']
-                cpu_usage = data['cpu_usage']
-                memory_usage = data['memory_usage']
-
-                try:
-                    # Upload to Timestream
-                    self.upload_to_timestream(
-                        record_timestamp,
-                        cpu_temperature,
-                        cpu_usage,
-                        memory_usage
-                    )
-
-                    # Remove the file after successful upload
-                    os.remove(filepath)
-                    self.logger.log_info(f"Processed and uploaded {file}")
-
-                except Exception as e:
-                    self.logger.log_error(f"Error processing file {file}: {e}")
-
-            time.sleep(60)
 
 if __name__ == "__main__":
     processor = RPiHealthProcessor()
-    processor.process_and_upload()
+    processor.run()

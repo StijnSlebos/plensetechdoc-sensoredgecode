@@ -11,18 +11,18 @@ All data and logs are saved under `/home/plense/`:
 ```
 /home/plense/
 ├── plensor_data/
-│ └── [SensorID]/[Timestamp]/
-│ ├── signal.flac
-│ ├── fft.npy
-│ ├── envelope.npy
-│ ├── signal_summary.json
-│ ├── processing_log.json
+│ ├── audio_data/
+│ │   ├── time_domain_not_processed/  # Raw audio files
+│ │   └── time_domain_processed/      # Processed audio files
+│ ├── metadata/                       # Local metadata files
+│ ├── environmental/                  # Environmental sensor data
+│ ├── tof/                           # Time-of-flight measurements
+│ ├── health_logs/                   # System health metrics
+│ ├── environment_logs/              # Environment monitoring logs
+│ └── logs/                          # Application logs
 ├── error_logs/
 │ └── error.log
-├── logs/
-│ ├── runtime.log
-│ ├── health.log
-│ └── watchdog.log
+└── metadata/                        # Sensor metadata files
 ```
 
 
@@ -30,13 +30,14 @@ All data and logs are saved under `/home/plense/`:
 
 ## 📦 Measurement Outputs
 
-Saved inside `/plensor_data/[SensorID]/[timestamp]/`, each measurement includes:
+Saved inside `/home/plense/plensor_data/`, each measurement includes:
 
-- `signal.flac`: Raw audio
-- `fft.npy`: Spectral features
-- `envelope.npy`: Time-domain envelope
-- `signal_summary.json`: Extracted metrics (TOF, peak amp, etc.)
-- `processing_log.json`: Metadata and processing status
+- `{meas_id}#{sensor_id}_{timestamp}.flac`: Raw audio recording
+- `{sensor_id}_{timestamp}.json`: Local metadata with measurement parameters
+- `{sensor_id}_env_{timestamp}.json`: Environmental sensor data (if available)
+- `{prefix}_{timestamp}.json`: TOF measurements (if available)
+- `health_{sensor_id}_{timestamp}.json`: System health metrics
+- `environment_{sensor_id}_{timestamp}.json`: Environment monitoring data
 
 ---
 
@@ -83,4 +84,4 @@ Saved inside `/plensor_data/[SensorID]/[timestamp]/`, each measurement includes:
 - [data_pipeline.md](data_pipeline.md)
 - [measurement_app.md](measurement_app.md)
 - [gpio_and_relay_setup.md](gpio_and_relay_setup.md)
-- [error_logger.py](../code/log-manager/error_logger.py)
+- [ErrorLogger.py](../code/log-manager/artifact/ErrorLogger.py)

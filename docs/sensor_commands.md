@@ -29,7 +29,7 @@ This document provides a complete reference to the command bytes used in Plensor
 ```
 
 
-- **FREQ_START/STOP**: in kHz
+- **FREQ_START/STOP**: in Hz (e.g., 20000 for 20 kHz)
 - **AMPLITUDE**: in volts
 - **DAMPING**: Optional byte (0–255)
 

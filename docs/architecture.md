@@ -12,7 +12,7 @@ The Plensor system comprises three main layers:
 2. **Software Layer (Edge Code)**
 3. **Metadata & Interface Layer**
 
-These layers interact to execute acoustic measurements, process sensor data, and manage deployments.
+These layers interact to execute acoustic measurements, process sensor data, and manage local sessions.
 
 ---
 
@@ -52,20 +52,21 @@ See [measurement_app.md](measurement_app.md), [sensor_commands.md](sensor_comman
 Located under the `/code/` folder:
 ```
 /code/
-├── measure-plensor/
-├── process-data/
-├── interface-guis/
+├── measure-plensor/artifact/
+├── process-data/artifact/
+├── Interface-guis/
 ├── metadata/
-├── deployments/
-├── log-manager/
-├── rpi-health/
+├── rpi-health/artifact/
+├── log-manager/artifact/
+├── setup-plensor/
+└── modem-manager/
 ```
 
 ---
 
 ## 🗂️ 3. Metadata & Interface Layer
 
-- **Metadata Editor**: Streamlit-based GUI for managing deployment metadata and sensor parameters
+- **Metadata Editor**: Streamlit-based GUI for managing session metadata and sensor parameters
 - **Interface GUIs**: Tkinter-based GUI for manual or continuous measurement control
 
 Includes:
@@ -91,10 +92,10 @@ See [metadata_interface.md](metadata_interface.md) and [interface_guide.md](inte
 
 | Component            | Depends On            |
 |---------------------|------------------------|
-| `measure-plensor`   | GPIO, serial, deployments |
+| `measure-plensor`   | GPIO, serial, metadata |
 | `process-data`      | Raw audio, metadata     |
 | `interface-guis`    | `measure-plensor`, settings |
-| `metadata`          | Streamlit, deployments  |
+| `metadata`          | Streamlit, local config |
 
 ---
 
