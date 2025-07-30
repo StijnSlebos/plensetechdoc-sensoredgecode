@@ -58,6 +58,15 @@ Includes:
 
 ---
 
+
+
+## 🗃️ Original Documentation Files
+
+Additional original reports, logs, and slides can be found in:
+
+- [docs/documentation_logs/](docs/documentation_logs/)
+
+---
 ## 🛠 Requirements
 
 - Raspberry Pi 4 or Compute Module
