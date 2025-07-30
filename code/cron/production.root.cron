@@ -1,0 +1,11 @@
+# Root crontab for Production Raspberry Pi
+# Last updated: 2024-11-15
+# 
+# To apply: sudo crontab production.root.cron
+
+TZ="Europe/Amsterdam"
+
+1 0 * * * /sbin/reboot
+10 0 * * * chown plense:plense /greengrass/v2/logs/*
+10 0 * * * chown plense:plense /home/plense/error_logs/*
+*/5 * * * * /home/plense/edge-code/modem-manager/modem_manager.sh >> /home/plense/error_logs/ModemManagerPlenseCron.log 2>&1

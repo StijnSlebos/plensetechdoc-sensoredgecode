@@ -1,0 +1,26 @@
+{
+    "sensor_versions": {
+      "V3.0": {
+        "default_damping_level": 0,
+        "sensors": [
+          {"sensor_id": 1, "damping_level": 6},
+          {"sensor_id": 7}
+        ]
+      },
+      "V4.0": {
+        "default_damping_level": 0,
+        "sensors": [
+          {"sensor_id": 44, "damping_level": 4},
+          {"sensor_id": 38, "damping_level": 3}
+        ]
+      },
+      "V5.0": {
+        "default_damping_level": 2,
+        "sensors": [
+          {"sensor_id": 90},
+          {"sensor_id": 156, "damping_level": 5}
+        ]
+      }
+    }
+  }
+  

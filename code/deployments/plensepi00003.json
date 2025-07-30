@@ -1,0 +1,30 @@
+{
+    "targetArn": "arn:aws:iot:eu-central-1:106005884410:thing/plensepi00003",
+    "components": {
+        "aws.greengrass.Cli": {
+            "componentVersion": "2.12.2",
+            "configurationUpdate": {
+                "merge": "{\"AuthorizedPosixGroups\":\"ggc_group,plense\"}"
+            }
+        },
+        "aws.greengrass.LocalDebugConsole": {
+            "componentVersion": "2.4.1"
+        },
+        "aws.greengrass.LogManager": {
+            "componentVersion": "2.3.7",
+            "configurationUpdate": {}
+        },
+        "ContainerManager": {
+            "componentVersion": "1.0.13",
+            "configurationUpdate": {
+                "reset": []
+            }
+        },
+        "FlirContainer": {
+            "componentVersion": "1.0.18",
+            "configurationUpdate": {
+                "reset": []
+            }
+        }
+    }
+}

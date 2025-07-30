@@ -1,0 +1,8 @@
+{
+    "sensor_ids": [],
+    "customer_id": "npec",
+    "pilot_id": "npec_drought_p01",
+    "test_id": "drought",
+    "amp_factor": "100",
+    "damping_level": "257"
+}
