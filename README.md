@@ -46,6 +46,8 @@ Full documentation is in `/docs/`.
 
 Start with: [docs/index.md](docs/index.md)
 
+-> or go to code documentation: [code/README.md](code/README.md)
+
 Includes:
 - Architecture overview
 - GPIO + relay wiring
