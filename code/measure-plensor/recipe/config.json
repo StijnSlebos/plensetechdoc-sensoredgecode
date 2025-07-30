@@ -1,0 +1,50 @@
+{
+    "RecipeFormatVersion": "2020-01-25",
+    "ComponentName": "MeasurePlensor",
+    "ComponentVersion": "1.0.13",
+    "ComponentDescription": "Component that reads out the Plensors.",
+    "ComponentPublisher": "Miranda",
+    "ComponentDependencies": {
+        "aws.greengrass.DockerApplicationManager": {
+            "VersionRequirement": "~2.0.0"
+        },
+        "aws.greengrass.TokenExchangeService": {
+            "VersionRequirement": "~2.0.0"
+        }
+    },
+    "ComponentConfiguration": {
+        "DefaultConfiguration": {
+            "topic": "plense/plensor",
+            "message": "Hello World from Plense!",
+            "qos": "1",
+            "accessControl": {
+                "aws.greengrass.ipc.mqttproxy": {
+                    "dockercontainer:mqttproxy:1": {
+                        "policyDescription": "Allows MQTT connection from AWS IoT Core",
+                        "operations": [
+                            "aws.greengrass#SubscribeToIoTCore"
+                        ],
+                        "resources": [
+                            "plense/plensor"
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "Manifests": [
+        {
+            "Platform": {
+                "os": "all"
+            },
+            "Lifecycle": {
+                "run": "docker run --privileged -v /home/plense/metadata:/home/plense/metadata -v /home/plense/plensor_data:/home/plense/plensor_data  -v /home/plense/error_logs:/home/plense/error_logs -v /greengrass/v2/logs:/greengrass/v2/logs -v /etc/timezone:/etc/timezone:ro -v /etc/localtime:/etc/localtime:ro -v {kernel:rootPath}/ipc.socket:{kernel:rootPath}/ipc.socket -v /etc/hostname:/etc/container_hostname -v /home/plense/.aws/credentials:/.aws/credentials -e IN_CONTAINER=True -e AWS_CONFIG_FILE=/.aws/credentials -e SVCUID -e AWS_GG_NUCLEUS_DOMAIN_SOCKET_FILEPATH_FOR_COMPONENT -e MQTT_TOPIC=\"{configuration:/topic}\" -e MQTT_MESSAGE=\"{configuration:/message}\" -e MQTT_QOS=\"{configuration:/qos}\" --rm 106005884410.dkr.ecr.eu-west-1.amazonaws.com/ggrepository:measure-plensor-012"
+            },
+            "Artifacts": [
+                {
+                    "URI": "docker:106005884410.dkr.ecr.eu-west-1.amazonaws.com/ggrepository:measure-plensor-012"
+                }
+            ]
+        }
+    ]
+}

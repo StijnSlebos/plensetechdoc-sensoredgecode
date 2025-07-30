@@ -1,0 +1,68 @@
+{
+    "material": "Aluminum",
+    "ID": "1234567890",
+    "label": "Test",
+    "sensorID": "1234567890",
+    "material2": "Aluminum",
+    "diameter_um": 12000,
+    "sensor_measurements": [
+        {
+            "measurement_type": "POINT_SWEEP",
+            "measurement_configuation": {
+                "start_frequency": 20000,
+                "stop_frequency": 100000,
+                "step_frequency": 100,
+                "repetitions": 1,
+                "duration_us": 50000,
+                "damping_level": 0,
+                "command": "SINE"
+            }
+        },
+        {
+            "measurement_type": "SEGMENT_SWEEP",
+            "measurement_configuation": {
+                "start_frequency": 20000,
+                "stop_frequency": 100000,
+                "sweep_frequency": 10000,
+                "repetitions": 1,
+                "duration_us": 50000,
+                "damping_level": 0,
+                "command": "SINE"
+            }
+        },
+        {
+            "measurement_type": "SINGLE_SWEEP",
+            "measurement_configuation": {
+                "start_frequency": 20000,
+                "stop_frequency": 100000,
+                "repetitions": 1,
+                "duration_us": 50000,
+                "damping_level": 0,
+                "command": "SINE"
+            }
+        },
+        {
+            "measurement_type": "DAMPING_SWEEP",
+            "measurement_configuation": {
+                "frequency": 20000,
+                "start_damping_level": 0,
+                "stop_damping_level": 100,
+                "step_damping_level": 10,
+                "repetitions": 1,
+                "duration_us": 50000,
+                "command": "SINE"
+            }
+        },
+        {
+            "measurement_type": "TOF_SWEEP",
+            "measurement_configuation": {
+                "timeout_us": 1000,
+                "repetitions": 1,
+                "tof_half_periods_start": 2,
+                "tof_half_periods_stop": 10,
+                "tof_half_periods_step": 2,
+                "damping_level": 0
+            }
+        }
+    ]
+}

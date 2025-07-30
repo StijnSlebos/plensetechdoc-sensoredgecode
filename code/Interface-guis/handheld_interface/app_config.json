@@ -1,0 +1,6 @@
+{
+    "MEASURING_DEVICE_ID": 122,
+    "INTERRUPT_FILE_PATH": "/home/plense/metadata/message_interrupt.json",
+    "AUDIO_FILES_NOT_PROCESSED_PATH": "/home/plense/metadata/audio_files_not_processed",
+    "TOF_FILES_NOT_PROCESSED_PATH": "/home/plense/metadata/tof_files_not_processed"
+}

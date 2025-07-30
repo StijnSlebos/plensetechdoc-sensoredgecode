@@ -1,0 +1,50 @@
+{
+    "RecipeFormatVersion": "2020-01-25",
+    "ComponentName": "LogManager",
+    "ComponentVersion": "1.0.1",
+    "ComponentDescription": "Component that orchestrates the logging of all other Greengrass components.",
+    "ComponentPublisher": "Miranda",
+    "ComponentDependencies": {
+        "aws.greengrass.DockerApplicationManager": {
+            "VersionRequirement": "~2.0.0"
+        },
+        "aws.greengrass.TokenExchangeService": {
+            "VersionRequirement": "~2.0.0"
+        }
+    },
+    "ComponentConfiguration": {
+        "DefaultConfiguration": {
+            "topic": "plense/plensor",
+            "message": "Hello World from Plense!",
+            "qos": "1",
+            "accessControl": {
+                "aws.greengrass.ipc.mqttproxy": {
+                    "dockercontainer:mqttproxy:1": {
+                        "policyDescription": "Allows MQTT connection from AWS IoT Core",
+                        "operations": [
+                            "aws.greengrass#PublishToIoTCore"
+                        ],
+                        "resources": [
+                            "plense/plensor"
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    "Manifests": [
+        {
+            "Platform": {
+                "os": "linux"
+            },
+            "Lifecycle": {
+                "run": "docker run --privileged -v /etc/timezone:/etc/timezone:ro -v /etc/localtime:/etc/localtime:ro -v /home/plense/metadata:/home/plense/metadata -v /etc/hostname:/etc/container_hostname -v /home/plense/.aws/credentials:/.aws/credentials -e IN_CONTAINER=True -e AWS_CONFIG_FILE=/.aws/credentials -e AWS_REGION=eu-west-1 -e BUCKET_NAME=dev-signal-bucket -e TABLE_NAME=sensor-table-dev -v {kernel:rootPath}/ipc.socket:{kernel:rootPath}/ipc.socket -e SVCUID -e AWS_GG_NUCLEUS_DOMAIN_SOCKET_FILEPATH_FOR_COMPONENT -e MQTT_TOPIC=\"{configuration:/topic}\" -e MQTT_MESSAGE=\"{configuration:/message}\" -e MQTT_QOS=\"{configuration:/qos}\" 106005884410.dkr.ecr.eu-west-1.amazonaws.com/ggrepository:log-manager-001"
+            },
+            "Artifacts": [
+                {
+                    "URI": "docker:106005884410.dkr.ecr.eu-west-1.amazonaws.com/ggrepository:log-manager-001"
+                }
+            ]
+        }
+    ]
+}

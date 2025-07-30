@@ -1,0 +1,11 @@
+{
+    "sensor_id": "#99999",
+    "pi_id": "plensepi99999",
+    "customer_id": "#BELLOWTEST",
+    "pilot_id": "#BELLOWTEST",
+    "test_id": "#BELLOWTEST",
+    "sensor_type": "PLENSOR",
+    "sensor_version": "VEXAMPLE",
+    "amp_factor": "100",
+    "damping_level": "0"
+}

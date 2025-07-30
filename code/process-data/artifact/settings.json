@@ -1,0 +1,37 @@
+{
+  "serial_settings": {
+    "SERIAL_PORT": "/dev/ttyUSB0",
+    "BAUD_RATE": 921600,
+    "BYTE_SIZE": 8,
+    "PARITY": "N",
+    "STOP_BITS": 1,
+    "TIMEOUT": 0.01,
+    "RETRIES": 3
+  },
+
+
+  "command_settings": {
+    "ACK_BYTE": "0x05",
+    "NAK_BYTE": "0x15",
+    "START_BYTE": "0x5a",
+    "INIT_BYTE": "0x5b",
+    "SINE_BYTE": "0x5c",
+    "TOF_BYTE": "0x5d",
+    "BLOCK_BYTE": "0x5e",
+    "TEMP_BYTE": "0x5f"
+  },
+
+
+  "measurement_settings": {
+    "SAMPLE_RATE": 384000,
+    "START_FREQUENCY": 10000,
+    "STOP_FREQUENCY": 100000,
+    "WAIT_TIME": 0.005,
+    "L_FUNCTION_TYPES": ["BLOCK", "SINE", "TOF", "TEMP"],
+    "L_FREQUENCIES": [10,100000],
+    "L_VOLTAGE": [0, 10],
+    "L_REPETITIONS": [1, 50],
+    "L_PULSES": [1, 5],
+    "L_DURATION": 1
+  }
+}
