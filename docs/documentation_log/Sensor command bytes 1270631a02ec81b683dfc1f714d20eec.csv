@@ -1,0 +1,11 @@
+﻿Name,Type,Hex code,Parameter 1,Parameter 2,Parameter 3,Output
+Get sensor ID byte,"Problem fixing, Setup",0x5B,,,,None
+Sine sweep byte,Measurement,0x5C,"Start frequency (Hz, 3 bytes)","Stop frequency (Hz, 3 bytes)","Duration (ms, 2 bytes)",signed int16 Audio data
+Impulse time of flight byte,Measurement,0x5D,"Timeout duration (micros, 2 bytes)",,,unsigned int32 ToF in ns
+Block sweep byte,Measurement,0x5E,"Start frequency (Hz, 3 bytes)","Stop frequency (Hz, 3 bytes)","Duration (ms, 2 bytes)",signed int16 Audio data
+Temperature humidity byte,Measurement,0x5F,,,,"4 times a unsigned int16 measurement in the order: [Temp_inner, Hum_inner, Temp_outer, Hum_outer] devide the data by 100 to get correct value"
+VCO Calibration byte,"Initialization, Setup",0x60,,,,None
+Set sensor ID byte,Setup,0x61,Sensor ID (3 bytes),,,None
+Reset sensor byte,Problem fixing,0x62,,,,None
+Set voltage level byte,"Initialization, Problem fixing, Setup",0x63,"Damping level (1 byte, 0-3, see explanation)",,,None
+Blockwave time of flight byte,Measurement,0x64,"Timeout duration (micros, 2 bytes), ",Half periods of a blockwave (1 byte),,unsigned int32 ToF in ns
