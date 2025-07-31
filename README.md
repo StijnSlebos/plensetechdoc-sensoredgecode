@@ -3,6 +3,14 @@
 # plensetechdoc-sensoredgecode
 Documentation and code for the distributed sensor system of 'plensors' from the company plense-technologies.. 
 
+> _a note from the author:_
+> I have built this repository based on an old repository with a lot of cloud infrastructure and simplyfied the code for local use (you can go back in repo-time to find some cloud elements).
+> For the documentation, I have pulled data from a lot of sources and together with the help of our AI/LLM friends came up with this large clickthrough of documentation.
+> I have added specific (human written) old documentation in the folder ```/docs/documentation_logs/``` if you are interested in those.
+> If things are incomplete, unclear or incorrect, let us know on the discussions page.
+> Have a nice read,
+> plense!
+
 # _Plensor Sensor Platform_
 
 Plensor is a modular ultrasonic sensing platform for environmental monitoring, object detection, and remote deployments. It includes hardware (custom Pi Hat + sensors), embedded control logic (GPIO and RS485), a configurable measurement engine, and a robust signal processing pipeline.
